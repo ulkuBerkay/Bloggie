@@ -16,12 +16,14 @@ namespace Bloggie.Web.Controllers
             this.bloggieDbContext = bloggieDbContext;
         }
 
+        //Adding Tags Get Method
         [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
 
+        //Adding Tags Post Method
         [HttpPost]
         [ActionName("Add")]
         public IActionResult Add(AddTagRequest addTagRequest)
@@ -46,5 +48,13 @@ namespace Bloggie.Web.Controllers
         //    //var displayName = Request.Form["displayName"];
         //    return View("Add");
         //}
+
+        //Listing Tags
+        [HttpGet]
+        public IActionResult List()
+        {
+            var tags = bloggieDbContext.Tags.ToList();
+            return View(tags);
+        }
     }
 }
