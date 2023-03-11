@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bloggie.Web.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bloggie.Web.Controllers
 {
+
     public class AdminTagsController : Controller
     {
         [HttpGet]
@@ -10,12 +12,21 @@ namespace Bloggie.Web.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //[ActionName("Add")]
+        //public IActionResult SubmitTag()
+        //{
+        //    //var name = Request.Form["name"];
+        //    //var displayName = Request.Form["displayName"];
+        //    return View("Add");
+        //}
+
         [HttpPost]
         [ActionName("Add")]
-        public IActionResult SubmitTag()
+        public IActionResult Add(AddTagRequest addTagRequest)
         {
-            var name = Request.Form["name"];
-            var displayName = Request.Form["displayName"];
+            var name = addTagRequest.Name;
+            var display = addTagRequest.DisplayName;
             return View("Add");
         }
     }
