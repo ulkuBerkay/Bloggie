@@ -1,4 +1,5 @@
 using Bloggie.Web.Data;
+using Bloggie.Web.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,9 @@ builder.Services.AddControllersWithViews();
 
 //DbContext properties with builder
 builder.Services.AddDbContext<BloggieDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BloggieDbConnectionString")));
+
+//Now we can use tag repo and itaginterface like dbcontex. Now we can use repos in controllers which allows usto get access to dbcontext
+builder.Services.AddScoped<ITagInterface, TagRepository>();
 
 var app = builder.Build();
 
