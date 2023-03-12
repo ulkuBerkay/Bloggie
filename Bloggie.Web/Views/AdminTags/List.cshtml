@@ -15,6 +15,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Display Name</th>
+                <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +25,7 @@
                         <th>@item.Id</th>
                         <th>@item.Name</th>
                         <th>@item.DisplayName</th>
+                     <th><a class="btn btn-warning" asp-controller="AdminTags" asp-action="Edit" asp-route-id="@item.Id">Edit</a></th>
                      </tr>
                 }
             </tbody>

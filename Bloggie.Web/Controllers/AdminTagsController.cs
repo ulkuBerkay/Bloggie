@@ -37,7 +37,7 @@ namespace Bloggie.Web.Controllers
             };
             bloggieDbContext.Add(tag);
             bloggieDbContext.SaveChanges();
-            return View("Add");
+            return RedirectToAction("List");
         }
 
         //[HttpPost]
@@ -56,5 +56,18 @@ namespace Bloggie.Web.Controllers
             var tags = bloggieDbContext.Tags.ToList();
             return View(tags);
         }
+
+        //Edit Page View Action
+        [HttpGet]
+        public IActionResult Edit(Guid id)
+        {
+            // First usage var tag = bloggieDbContext.Tags.Find(id);
+
+            //Second usage
+            var tag = bloggieDbContext.Tags.FirstOrDefault(t => t.Id == id);
+            return View(tag);
+        }
+
+
     }
 }
