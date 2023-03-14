@@ -2,6 +2,7 @@
 using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Bloggie.Web.Controllers
 {
@@ -16,7 +17,7 @@ namespace Bloggie.Web.Controllers
             this.blogPostRepository = blogPostRepository;
         }
         [HttpGet]
-        public async Task <IActionResult> Add()
+        public async Task<IActionResult> Add()
         {
             var tags = await tagRepository.GetAllAsync();
             var model = new AddBlogPostRequest
@@ -31,7 +32,7 @@ namespace Bloggie.Web.Controllers
         }
 
         [HttpPost]
-        public async Task <IActionResult> Add(AddBlogPostRequest addBlogPostRequest)
+        public async Task<IActionResult> Add(AddBlogPostRequest addBlogPostRequest)
         {
             var blogPost = new BlogPost
             {
@@ -53,8 +54,8 @@ namespace Bloggie.Web.Controllers
                 var existingTag = await tagRepository.GetAsync(selecetedTagIdAsGuid);
                 if (existingTag != null)
                 {
-                  selectedTags.Add(existingTag);
-                }     
+                    selectedTags.Add(existingTag);
+                }
             }
             blogPost.Tags = selectedTags;
             await blogPostRepository.AddAsync(blogPost);
@@ -66,6 +67,74 @@ namespace Bloggie.Web.Controllers
         {
             var blogPost = await blogPostRepository.GetAllAsync();
             return View(blogPost);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var blogPost = await blogPostRepository.GetAsync(id);
+            var tagsFromDomainModel = await tagRepository.GetAllAsync();
+            if (blogPost != null)
+            {
+                var model = new EditBlogPostRequest
+                {
+                    Id = blogPost.Id,
+                    PubishedDate = blogPost.PubishedDate,
+                    Visible = blogPost.Visible,
+                    Author = blogPost.Author,
+                    Content = blogPost.Content,
+                    FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                    UrlHandle = blogPost.UrlHandle,
+                    Heading = blogPost.Heading,
+                    PageTitle = blogPost.PageTitle,
+                    ShortDescription = blogPost.ShortDescription,
+                    Tags = tagsFromDomainModel.Select(x => new SelectListItem
+                    {
+                        Text = x.Name,
+                        Value = x.Id.ToString()
+                    }),
+                    SelectedTags = blogPost.Tags.Select(x => x.Id.ToString()).ToArray(),
+                };
+                return View(model);
+            }
+            return View(null);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditBlogPostRequest editBlogPostRequest)
+        {
+            var blogPostDomainModel = new BlogPost
+            {
+                Id = editBlogPostRequest.Id,
+                PubishedDate = editBlogPostRequest.PubishedDate,
+                Visible = editBlogPostRequest.Visible,
+                Author = editBlogPostRequest.Author,
+                Content = editBlogPostRequest.Content,
+                FeaturedImageUrl = editBlogPostRequest.FeaturedImageUrl,
+                UrlHandle = editBlogPostRequest.UrlHandle,
+                Heading = editBlogPostRequest.Heading,
+                PageTitle = editBlogPostRequest.PageTitle,
+                ShortDescription = editBlogPostRequest.ShortDescription,
+            };
+            var selectedTags = new List<Tag>();
+            foreach (var selectedTag in editBlogPostRequest.SelectedTags)
+            {
+                if (Guid.TryParse(selectedTag, out var tag))
+                {
+                    var foundTag = await tagRepository.GetAsync(tag);
+                    if (foundTag != null)
+                    {
+                        selectedTags.Add(foundTag);
+                    }
+                }
+            }
+            blogPostDomainModel.Tags = selectedTags;
+            var updatedBlog = await blogPostRepository.UpdateAsync(blogPostDomainModel);
+            if (updatedBlog != null)
+            {
+                return RedirectToAction("List");
+            }
+            return RedirectToAction("Edit");
         }
     }
 }
