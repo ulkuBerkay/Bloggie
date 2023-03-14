@@ -12,7 +12,7 @@ builder.Services.AddDbContext<BloggieDbContext>(options => options.UseSqlServer(
 
 //Now we can use tag repo and itaginterface like dbcontex. Now we can use repos in controllers which allows usto get access to dbcontext
 builder.Services.AddScoped<ITagInterface, TagRepository>();
-
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
