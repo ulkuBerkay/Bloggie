@@ -15,5 +15,6 @@ namespace Bloggie.Web.Models.Domain
         public string Author { get; set; }
         public bool Visible { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public ICollection<BlogPostLike> Likes { get; set; }
     }
 }
