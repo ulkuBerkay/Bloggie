@@ -1,4 +1,6 @@
-﻿@model Bloggie.Web.Models.Domain.BlogPost
+﻿@using Microsoft.AspNetCore.Identity
+@model Bloggie.Web.Models.ViewModels.BlogDetailsViewModel
+@inject SignInManager<IdentityUser> signInManager
 @{
     ViewData["Title"] = Model.PageTitle;
 }
@@ -12,20 +14,36 @@
                     <h1 class="mb-3">@Model.Heading</h1>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-secondary">@Model.Author</span>
-                        <span class="text-secondary">@Model.PubishedDate.ToShortDateString()</span>
+                        <span class="text-secondary">@Model.PublishedDate.ToShortDateString()</span>
                     </div>
-                    <div>
-                        @foreach (var tag in Model.Tags)
+
+                    <div class="mb-3 " style="color: cornflowerblue; font-weight: 400; font-size: 20px">
+                    @if (signInManager.IsSignedIn(User))
                     {
-                        <span class="badge bg-secondary mb-3">@tag.Name</span>
+                                <a>
+                                    <i class="bi bi-hand-thumbs-up me-3" style="color: cornflowerblue"></i>
+                                </a>
+                                <span>@Model.TotalLikes</span> <span>likes </span>
+                    }
+                    </div>
+
+
+
+                    <div>
+                    @foreach (var tag in Model.Tags)
+                    {
+                                <span class="badge bg-primary mb-3">@tag.Name</span>
                     }
                     </div>
                     <img src="@Model.FeaturedImageUrl" class="d-block img-fluid mb-3" />
-                    <div class="mb-3 blog-details-content">@Html.Raw(@Model.Content)</div>
+
+                    <div class="mb-3 blog-details-content">
+                    @Html.Raw(Model.Content)
+                    </div>
             }
             else
             {
-                <p>Blog post not found!</p>
+                    <p>Blog post not found!</p>
             }
         </div>
     </div>
