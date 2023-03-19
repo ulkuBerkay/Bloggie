@@ -2,13 +2,14 @@
 using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Controllers
 {
-
+    [Authorize(Roles = "Admin")]
     public class AdminTagsController : Controller
     {
         private readonly ITagInterface tagRepository;
@@ -21,6 +22,7 @@ namespace Bloggie.Web.Controllers
 
         //Adding Tags Get Method
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             return View();
@@ -29,6 +31,8 @@ namespace Bloggie.Web.Controllers
         //Adding Tags Post Method
         [HttpPost]
         [ActionName("Add")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
             //var name = addTagRequest.Name;
@@ -42,17 +46,9 @@ namespace Bloggie.Web.Controllers
            return RedirectToAction("List");
         }
 
-        //[HttpPost]
-        //[ActionName("Add")]
-        //public IActionResult SubmitTag()
-        //{
-        //    //var name = Request.Form["name"];
-        //    //var displayName = Request.Form["displayName"];
-        //    return View("Add");
-        //}
-
         //Listing Tags
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> List()
         {
            var tags = await tagRepository.GetAllAsync();
@@ -61,6 +57,7 @@ namespace Bloggie.Web.Controllers
 
         //Edit Page View Action
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid id)
         {
             // First usage var tag = bloggieDbContext.Tags.Find(id);
@@ -82,6 +79,7 @@ namespace Bloggie.Web.Controllers
 
         //Adding Edit Post Method
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(EditTagRequest editTagRequest)
         {
             var tag = new Tag
@@ -101,7 +99,8 @@ namespace Bloggie.Web.Controllers
 
         //Delete Post Method
         [HttpPost]
-         public async Task<IActionResult> Delete(EditTagRequest editTagRequest)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(EditTagRequest editTagRequest)
         {
             var deletedTag = await tagRepository.DeleteAsync(editTagRequest.Id);
             if (deletedTag != null)
